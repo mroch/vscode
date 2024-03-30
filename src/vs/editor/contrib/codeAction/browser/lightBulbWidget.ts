@@ -242,7 +242,13 @@ export class LightBulbWidget extends Disposable implements IContentWidget {
 			return;
 		}
 		if (autoRun) {
-			this.title = nls.localize('codeActionAutoRun', "Run: {0}", this.state.actions.validActions[0].action.title);
+			const { command, title } = this.state.actions.validActions[0].action;
+			const kbLabel = command ? this._keybindingService.lookupKeybinding(command.id)?.getLabel() : undefined;
+			if (kbLabel) {
+				this.title = nls.localize('codeActionAutoRunWithKb', "Run: {0} ({1})", title, kbLabel);
+			} else {
+				this.title = nls.localize('codeActionAutoRun', "Run: {0}", title);
+			}
 		} else if (autoFix && this._preferredKbLabel) {
 			this.title = nls.localize('preferredcodeActionWithKb', "Show Code Actions. Preferred Quick Fix Available ({0})", this._preferredKbLabel);
 		} else if (!autoFix && this._quickFixKbLabel) {
